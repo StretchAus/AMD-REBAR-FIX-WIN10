@@ -1,5 +1,5 @@
 # AMD-REBAR-FIX-WIN10
-AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files to fix install bugs, ditching optimizations for an aging OS. It’s incredibly insulting to be forced onto a worse gaming experience or pushed toward Windows 11 bloatware just for artificial feature locking. Total garbage move for hardware owners who have preference.
+AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files to fix install bugs, ditching optimizations for an aging OS. It’s incredibly insulting to be forced onto a worse gaming experience or pushed toward Windows 11 bloatware just for artificial feature locking. Total dick move to hardware owners who have preference. So heres my fix.
 
 ## 🚀 How to Run the Bloody Thing
 
