@@ -9,8 +9,7 @@ AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files
 4. **Reboot your system immediately** to let the graphics hardware scheduler, network stack, and kernel registry hooks successfully bind.
 
 # AMD RDNA Master Kernel & Hardware Performance Injector
-### Automated Windows 10 Pro Performance Restoration & Latency Optimization Suite
-# !THIS SCRIPT ONLY AFFECTS GPU FOCUSED REGISTRY FILES SPECIFICALLY FOR AMD GPUS ON WINDOWS 10!
+# THIS SCRIPT ONLY AFFECTS GPU FOCUSED REGISTRY FILES SPECIFICALLY FOR AMD GPUS ON WINDOWS 10
 
 ## ⚡ What This Script Actually Does
 
