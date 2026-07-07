@@ -1,5 +1,5 @@
 # AMD-REBAR-FIX-WIN10
-AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files to fix install bugs, ditching optimizations for an aging OS. It’s incredibly insulting to be forced onto a worse gaming experience or pushed toward Windows 11 bloatware just for artificial feature locking. Total dick move to hardware owners who have preference. So heres my fix, this works with full AMD Adrenaline Installs! I personally use this with igors MoreClockTool2 and amd driver only install without adrenaline for a full feature bloatless software but you will have to force it to startup with windows (details at bottom use at your own risk!)
+AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files to fix install bugs, ditching optimizations for an aging OS. It’s incredibly insulting to be forced onto a worse gaming experience or pushed toward Windows 11 bloatware just for artificial feature locking. Total dick move to hardware owners who have preference. So heres my fix, this works with full AMD Adrenaline Installs! I personally use this with Hellm's MoreClockTool2 and amd driver only install without adrenaline for a full feature bloatless software but you will have to force it to startup with windows (details at bottom use at your own risk!)
 
 ## 🚀 How to Run the Bloody Thing
 
