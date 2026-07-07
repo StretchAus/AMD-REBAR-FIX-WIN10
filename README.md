@@ -3,7 +3,7 @@ AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files
 
 ## 🚀 How to Run the Bloody Thing
 
-1. Extract amd-win10-rebar-fix-run-as-admin.bat to anywhere on your pc
+1. Extract amd-win10-rebar-fix-run-as-admin.bat from the release zip to anywhere on your pc
 2. Right-click the file and select **Run as Administrator** (Windows will throw a fit if you don't give it admin tokens).
 3. The live logger screen will spit out verification receipts for all six optimization blocks before creating the silent background clone.
 4. **Reboot your system immediately** to let the graphics hardware scheduler, network stack, and kernel registry hooks successfully bind.
