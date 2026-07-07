@@ -23,6 +23,67 @@ if /i "%~dp0" neq "!TargetFolder!\" (
     if not exist "!TargetFolder!" mkdir "!TargetFolder!" >nul 2>&1
     copy /y "%~f0" "!TargetFile!" >nul 2>&1
 )
+:: 1.5 Silently inject the separate Rollback Tool directly into the repository
+set "UninstallerFile=C:\AMD\Fix\AMD-Rollback-Tool.bat"
+if not exist "!UninstallerFile!" (
+    (
+    echo @echo off
+    echo setlocal enabledelayedexpansion
+    echo net session ^>nul 2^>&1
+    echo if %%errorLevel%% neq 0 ^( echo [ERROR] Run as Administrator! ^& pause ^& exit /b ^)
+    echo echo =============================================================================
+    echo echo   RUNNING AMD MASTER PERFORMANCE SUITE - COMPLETE SYSTEM UNINSTALLER TOOL  
+    echo echo =============================================================================
+    echo echo.
+    echo echo [1/6] Deleting Automated Update Correction System boot task...
+    echo schtasks /delete /tn "AMD-Win10-Fix" /f
+    echo echo [2/6] Restoring AMD driver defaults and re-enabling Event Utility...
+    echo set "BaseKey=HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}"
+    echo for /f "tokens=*" %%%%K in ^('reg query "%%BaseKey%%" /f "00*" /k 2^^^>nul'^) do ^(
+    echo     reg query "%%%%K" /v "ProviderName" 2^>nul ^| findstr /i "Advanced Micro Devices AMD" ^>nul    
+    echo     if ^^!errorlevel^^! equ 0 ^(
+    echo         reg delete "%%%%K" /v "KMD_EnableReBarForLegacyASIC" /f ^>nul 2^CustomRedirect1
+    echo         reg delete "%%%%K" /v "KMD_RebarControlMode" /f ^>nul 2^CustomRedirect1
+    echo         reg delete "%%%%K" /v "KMD_RebarControlSupport" /f ^>nul 2^CustomRedirect1
+    echo         reg add "%%%%K" /v "EnableUlps" /t REG_DWORD /d 1 /f ^>nul
+    echo         reg add "%%%%K" /v "ShaderCache" /t REG_DWORD /d 0 /f ^>nul
+    echo         reg delete "%%%%K" /v "StutterMode" /f ^>nul 2^CustomRedirect1
+    echo         reg delete "%%%%K" /v "DisableDscDeepSleep" /f ^>nul 2^CustomRedirect1
+    echo         reg delete "%%%%K" /v "MainFrameLatency" /f ^>nul 2^CustomRedirect1
+    echo     ^)
+    echo ^)
+    echo for /f "tokens=5 delims=\\" %%%%S in ^('reg query "HKLM\SYSTEM\CurrentControlSet\Services" /f "AMD*Events*" /k 2^^^>nul'^) do ^(
+    echo     sc config "%%%%S" start= auto ^>nul
+    echo     sc start "%%%%S" ^>nul
+    echo ^)
+    echo echo [3/6] Restoring default Windows Graphics Scheduling parameters...
+    echo reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "HwSchMode" /t REG_DWORD /d 1 /f ^>nul
+    echo echo [4/6] Restoring Multi-Plane Overlay ^(MPO^) desktop configuration matrix...
+    echo reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Dwm" /v "OverlayTestMode" /f ^>nul 2^CustomRedirect1
+    echo echo [5/6] Restoring factory default Core OS network and recovery thresholds...
+    echo reg delete "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "TdrDelay" /f ^>nul 2^CustomRedirect1
+    echo reg delete "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "TdrDdiDelay" /f ^>nul 2^CustomRedirect1
+    echo reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power" /v "HiberbootEnabled" /t REG_DWORD /d 1 /f ^>nul
+    echo reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" /v "NetworkThrottlingIndex" /t REG_DWORD /d 10 /f ^>nul
+    echo reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\GameDVR" /v "AllowGameDVR" /f ^>nul 2^CustomRedirect1
+    echo echo [6/6] Purging Take Ownership Shell extensions and wiping safe storage cache...
+    echo reg delete "HKEY_CLASSES_ROOT\*\shell\TakeOwnership" /f ^>nul 2^CustomRedirect1
+    echo reg delete "HKEY_CLASSES_ROOT\*\shell\runas" /f ^>nul 2^CustomRedirect1
+    echo reg delete "HKEY_CLASSES_ROOT\Directory\shell\TakeOwnership" /f ^>nul 2^CustomRedirect1
+    echo reg delete "HKEY_CLASSES_ROOT\Drive\shell\runas" /f ^>nul 2^CustomRedirect1
+    echo echo -----------------------------------------------------------------
+    echo echo   ALL SETTINGS SYSTEMATICALLY RESTORED TO STOCK!
+    echo echo -----------------------------------------------------------------
+    echo echo Self-destruction engaged... Cleaning local storage folder...
+    echo timeout /t 2 ^>nul
+    echo start /b cmd /c "del /f /q \"%%~f0\" ^& rmdir /s /q \"C:\AMD\Fix\""
+    echo exit
+    ) > "!UninstallerFile!"
+    powershell -Command "(Get-Content '!UninstallerFile!') -replace 'CustomRedirect1', 'CustomRedirect2' | Set-Content '!UninstallerFile!'" >nul 2>&1
+    powershell -Command "(Get-Content '!UninstallerFile!') -replace 'CustomRedirect2', '^CustomRedirect3' | Set-Content '!UninstallerFile!'" >nul 2>&1
+    powershell -Command "(Get-Content '!UninstallerFile!') -replace 'CustomRedirect3', '^^^>nul 2^^^CustomRedirect4' | Set-Content '!UninstallerFile!'" >nul 2>&1
+    powershell -Command "(Get-Content '!UninstallerFile!') -replace 'CustomRedirect4', '^^^>nul' | Set-Content '!UninstallerFile!'" >nul 2>&1
+)
 :: Force register/update background startup automation task parameters cleanly
 schtasks /create /tn "AMD-Win10-Fix" /tr "cmd.exe /c C:\AMD\Fix\%~nx0" /sc onstart /ru "NT AUTHORITY\SYSTEM" /rl highest /f >nul 2>&1
 :: Process Canary Update Check (Dynamic Registry Query Execution)
