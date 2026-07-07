@@ -14,7 +14,7 @@ AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files
 ## ⚡ What This Script Actually Does
 
 ### Redundant Repository & Silent Canary Monitor
-* **Self-Cloning Storage Engine:** Automatically clones the script and an uninstaller script straight into `C:\AMD\Fix\` on the first run so your mates can't accidentally delete it.
+* **Self-Cloning Storage Engine:** Automatically clones the script and an uninstaller script straight into `C:\AMD\Fix\` on the first run so your mates can't accidentally delete it and can easily uninstall if they think its causing issues.
 * **Automated Update Correction System:** Deploys a hidden, background startup automation task (`AMD-Win10-Fix`) via Windows Task Scheduler to run silently under maximum kernel authority (`NT AUTHORITY\SYSTEM`).
 * **Silent Canary Monitor:** Every single boot, an invisible thread runs a sub-millisecond check via dynamic wildcard filters (`AMD*Events*`). If a recent AMD driver update has sneakily flipped the event utility back to `RUNNING`, it trips a silent alarm and re-injects your entire optimization profile. If everything is already sweet, it exits instantly to preserve CPU cycles.
 
