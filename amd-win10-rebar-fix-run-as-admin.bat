@@ -24,7 +24,7 @@ if /i "%~dp0" neq "!TargetFolder!\" (
     copy /y "%~f0" "!TargetFile!" >nul 2>&1
 )
 :: 1.5 Silently inject the separate Rollback Tool directly into the repository
-set "UninstallerFile=C:\AMD\Fix\AMD-Rollback-Tool.bat"
+set "UninstallerFile=C:\AMD\Fix\AMD-Rollback-Run-As_Admin.bat"
 if not exist "!UninstallerFile!" (
     (
     echo @echo off
