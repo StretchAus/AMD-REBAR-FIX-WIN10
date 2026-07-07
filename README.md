@@ -1,5 +1,5 @@
 # AMD-REBAR-FIX-WIN10
-AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files to fix install bugs, ditching optimizations for an aging OS. It’s incredibly insulting to be forced onto a worse gaming experience or pushed toward Windows 11 bloatware just for artificial feature locking. Total dick move to hardware owners who have preference. So heres my fix.
+AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files to fix install bugs, ditching optimizations for an aging OS. It’s incredibly insulting to be forced onto a worse gaming experience or pushed toward Windows 11 bloatware just for artificial feature locking. Total dick move to hardware owners who have preference. So heres my fix, this works with full AMD Adrenaline Installs! I personally use this with igors MoreClockTool2 and amd driver only install without adrenaline for a full feature bloatless software but you will have to force it to startup with windows (details at bottom use at your own risk!)
 
 ## 🚀 How to Run the Bloody Thing
 
@@ -47,3 +47,22 @@ AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files
 * **Advanced Query Syntax (AQS) Guardrails:** Implements an explicit exclusion script block (`"AppliesTo"="NOT..."`). The right-click context option is automatically hidden when interacting with your main C-drive root or critical folders like `C:\Windows`, `System32`, `Program Files`, `Program Files (x86)`, `C:\Users`, or `C:\ProgramData`. This makes it completely foolproof so you or your mates can't accidentally brick the entire operating system with a bad click.
 
 ---
+
+IF YOU WANT TO USE MORECLOCKTOOL WITH THIS IT IS A PAID MICROSOFT STORE APP 
+
+Once Downloaded:
+
+1. Open the hidden AppsFolder Press Win + R, then type: 
+shell:AppsFolder
+
+2. Find MoreClockTool
+Right‑click → Create shortcut  
+Windows will place the shortcut on your desktop.
+
+3. Move shortcut from desktop into Startup
+Press Win + R again: 
+shell:startup
+
+Move the shortcut into this folder.
+This forces Windows to launch the app using its proper UWP activation path.
+
