@@ -50,6 +50,8 @@ AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files
 
 IF YOU WANT TO USE MORECLOCKTOOL WITH THIS IT IS A PAID MICROSOFT STORE APP 
 
+Use DDU to remove old drivers and install latest as driver-only install
+
 Once Downloaded:
 
 1. Open the hidden AppsFolder Press Win + R, then type: 
