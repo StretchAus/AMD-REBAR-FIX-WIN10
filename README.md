@@ -39,7 +39,6 @@ AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files
 ### Core OS Driver Recovery & Network Optimizations
 * **TDR Extension Parameters:** Extends Timeout Detection and Recovery values (`TdrDelay=10`, `TdrDdiDelay=10`) from 2 seconds to 10 seconds. Windows will actually wait for heavy shader caching loops to finish instead of throwing a total tantrum and crashing your game straight back to the desktop.
 * **Hybrid Fast Startup Termination:** Disables `HiberbootEnabled=0` to stop Windows from hibernating dirty kernel states on shutdown, making sure a clean registry map loads on every cold boot.
-* **Multimedia Network Throttling Elimination:** Adjusts `NetworkThrottlingIndex` to the absolute maximum integer (`4294967295`) to terminate the Windows multimedia network streaming throttle limit, allowing raw, uninterrupted packet priority for lower competitive online ping jitter.
 * **GameDVR Hook Blocks:** Disables Xbox background recording hooks (`AllowGameDVR=0`) to claw back lost memory bandwidth.
 
 ### Safety-Hardened Take Ownership Context Extensions
