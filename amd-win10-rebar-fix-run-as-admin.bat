@@ -226,7 +226,6 @@ echo  [+] Desktop Multi-Plane Overlay (MPO) Flickering Framework Disabled
 echo  [+] Driver Timeout Detection and Recovery (TDR) Extended to 10s
 echo  [+] Windows GameDVR Background Hook Injections Blocked
 echo  [+] Windows Kernel Hybrid Fast Startup Hibernation Disabled
-echo  [+] Multimedia Network Stream Throttling Engine Terminated
 echo  [+] File, Folder, and Volume "Take Ownership" Context Actions Enabled
 echo -----------------------------------------------------------------
 echo.
