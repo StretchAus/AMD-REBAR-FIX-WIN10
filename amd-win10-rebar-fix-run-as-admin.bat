@@ -15,7 +15,7 @@ echo ===========================================================================
 echo.
 
 :: PART 0: AUTOMATED ARCHIVE ARCHITECTURE (SELF-CLONING STORAGE ENGINE)
-set "TargetFolder=C:\AMD\Fix"
+set "TargetFolder=C:\AMD-Fix"
 set "TargetFile=!TargetFolder!\%~nx0"
 echo [0/6] Automated AMD Updates Refixer Installed (This Script Will Run Automagically Whenever An AMD GPU Update Happens)...
 :: Verify and mirror script to the safe storage repository silently
@@ -24,7 +24,7 @@ if /i "%~dp0" neq "!TargetFolder!\" (
     copy /y "%~f0" "!TargetFile!" >nul 2>&1
 )
 :: 1.5 Silently inject the separate Rollback Tool directly into the repository
-set "UninstallerFile=C:\AMD\Fix\amd-rollback-run-as_admin.bat"
+set "UninstallerFile=C:\AMD-Fix\amd-rollback-run-as_admin.bat"
 if not exist "!UninstallerFile!" (
     (
     echo @echo off
@@ -75,7 +75,7 @@ if not exist "!UninstallerFile!" (
     echo echo -----------------------------------------------------------------
     echo echo Self-destruction engaged... Cleaning local storage folder...
     echo timeout /t 2 ^>nul
-    echo start /b cmd /c "del /f /q \"%%~f0\" ^& rmdir /s /q \"C:\AMD\Fix\""
+    echo start /b cmd /c "del /f /q \"%%~f0\" ^& rmdir /s /q \"C:\AMD-Fix\""
     echo exit
     ) > "!UninstallerFile!"
     powershell -Command "(Get-Content '!UninstallerFile!') -replace 'CustomRedirect1', 'CustomRedirect2' | Set-Content '!UninstallerFile!'" >nul 2>&1
@@ -84,7 +84,7 @@ if not exist "!UninstallerFile!" (
     powershell -Command "(Get-Content '!UninstallerFile!') -replace 'CustomRedirect4', '^^^>nul' | Set-Content '!UninstallerFile!'" >nul 2>&1
 )
 :: Force register/update background startup automation task parameters cleanly
-schtasks /create /tn "AMD-Win10-Fix" /tr "cmd.exe /c C:\AMD\Fix\%~nx0" /sc onstart /ru "NT AUTHORITY\SYSTEM" /rl highest /f >nul 2>&1
+schtasks /create /tn "AMD-Win10-Fix" /tr "cmd.exe /c C:\AMD-Fix\%~nx0" /sc onstart /ru "NT AUTHORITY\SYSTEM" /rl highest /f >nul 2>&1
 :: Process Canary Update Check (Dynamic Registry Query Execution)
 if /i "%USERNAME%"=="SYSTEM" (
     set "UpdateDetected=0"
@@ -226,6 +226,7 @@ echo  [+] Desktop Multi-Plane Overlay (MPO) Flickering Framework Disabled
 echo  [+] Driver Timeout Detection and Recovery (TDR) Extended to 10s
 echo  [+] Windows GameDVR Background Hook Injections Blocked
 echo  [+] Windows Kernel Hybrid Fast Startup Hibernation Disabled
+echo  [+] Multimedia Network Stream Throttling Engine Terminated
 echo  [+] File, Folder, and Volume "Take Ownership" Context Actions Enabled
 echo -----------------------------------------------------------------
 echo.
