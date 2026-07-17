@@ -1,6 +1,116 @@
 @echo off
 setlocal EnableDelayedExpansion
 
+@echo off
+setlocal EnableDelayedExpansion
+
+:: ============================================================
+:: ADMIN CHECK
+:: ============================================================
+net session >nul 2>&1
+if %errorLevel% neq 0 (
+    echo [ERROR] This script must be run as Administrator!
+    echo Right-click the file and select "Run as administrator".
+    pause
+    exit /b
+)
+
+echo =============================================================================
+echo   RUNNING WIN 10 MASTER AMD RDNA KERNEL AND HARDWARE PERFORMANCE INJECTOR
+echo =============================================================================
+echo.
+
+:: ============================================================
+:: PART 0 — SELF-CLONE ENGINE + UNINSTALLER + SCHEDULED TASK
+:: ============================================================
+set "TargetFolder=C:\AMD-Fix"
+set "TargetFile=%TargetFolder%\%~nx0"
+
+echo [0/6] Automated AMD Updates Refixer Installed...
+
+:: Clone script into C:\AMD-Fix
+if /i "%~dp0" neq "%TargetFolder%\" (
+    if not exist "%TargetFolder%" mkdir "%TargetFolder%" >nul 2>&1
+    copy /y "%~f0" "%TargetFile%" >nul 2>&1
+)
+
+:: Generate Uninstaller
+set "UninstallerFile=C:\AMD-Fix\amd-rollback-run-as_admin.bat"
+
+if not exist "%UninstallerFile%" (
+    (
+        echo @echo off
+        echo setlocal enabledelayedexpansion
+        echo net session ^>nul 2^>^&1
+        echo if %%errorLevel%% neq 0 ^( echo [ERROR] Run as Administrator! ^& pause ^& exit /b ^)
+        echo echo =============================================================================
+        echo echo   RUNNING AMD MASTER PERFORMANCE SUITE - COMPLETE SYSTEM UNINSTALLER TOOL
+        echo echo =============================================================================
+        echo echo.
+        echo echo [1/6] Deleting Automated Update Correction System boot task...
+        echo schtasks /delete /tn "AMD-Win10-Fix" /f
+        echo.
+        echo echo [2/6] Restoring AMD driver defaults and re-enabling Event Utility...
+        echo set "BaseKey=HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}"
+        echo for /f "tokens=*" %%%%K in ^('reg query "%%%%BaseKey%%%%" /f "00" /k 2^^^>nul'^) do ^(
+        echo     reg query "%%%%K" /v "ProviderName" 2^>nul ^| findstr /i "Advanced Micro Devices" ^>nul
+        echo     if ^^!errorlevel^^! equ 0 ^(
+        echo         reg delete "%%%%K" /v "KMD_EnableReBarForLegacyASIC" /f ^>nul
+        echo         reg delete "%%%%K" /v "KMD_RebarControlMode" /f ^>nul
+        echo         reg delete "%%%%K" /v "KMD_RebarControlSupport" /f ^>nul
+        echo         reg add "%%%%K" /v "EnableUlps" /t REG_DWORD /d 1 /f ^>nul
+        echo         reg add "%%%%K" /v "ShaderCache" /t REG_DWORD /d 0 /f ^>nul
+        echo         reg delete "%%%%K" /v "StutterMode" /f ^>nul
+        echo         reg delete "%%%%K" /v "DisableDscDeepSleep" /f ^>nul
+        echo         reg delete "%%%%K" /v "MainFrameLatency" /f ^>nul
+        echo     ^)
+        echo ^)
+        echo for /f "tokens=5 delims=" %%%%S in ^('reg query "HKLM\SYSTEM\CurrentControlSet\Services" /f "AMDEvents" /k 2^^^>nul'^) do ^(
+        echo     sc config "%%%%S" start= auto ^>nul
+        echo     sc start "%%%%S" ^>nul
+        echo ^)
+        echo.
+        echo echo [3/6] Restoring default Windows Graphics Scheduling parameters...
+        echo reg add "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "HwSchMode" /t REG_DWORD /d 1 /f ^>nul
+        echo.
+        echo echo [4/6] Restoring Multi-Plane Overlay ^(MPO^) desktop configuration matrix...
+        echo reg delete "HKLM\SOFTWARE\Microsoft\Windows\Dwm" /v "OverlayTestMode" /f ^>nul
+        echo.
+        echo echo [5/6] Restoring factory default Core OS network and recovery thresholds...
+        echo reg delete "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "TdrDelay" /f ^>nul
+        echo reg delete "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "TdrDdiDelay" /f ^>nul
+        echo reg add "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Power" /v "HiberbootEnabled" /t REG_DWORD /d 1 /f ^>nul
+        echo reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows\GameDVR" /v "AllowGameDVR" /f ^>nul
+        echo.
+        echo echo [6/6] Purging Take Ownership Shell extensions and wiping safe storage cache...
+        echo reg delete "HKEY_CLASSES_ROOT\*\shell\TakeOwnership" /f ^>nul
+        echo reg delete "HKEY_CLASSES_ROOT\*\shell\runas" /f ^>nul
+        echo reg delete "HKEY_CLASSES_ROOT\Directory\shell\TakeOwnership" /f ^>nul
+        echo reg delete "HKEY_CLASSES_ROOT\Drive\shell\runas" /f ^>nul
+        echo.
+        echo echo -----------------------------------------------------------------
+        echo echo   ALL SETTINGS SYSTEMATICALLY RESTORED TO STOCK!
+        echo echo -----------------------------------------------------------------
+        echo echo Self-destruction engaged... Cleaning local storage folder...
+        echo timeout /t 2 ^>nul
+        echo start /b cmd /c "del /f /q "%%~f0" ^& rmdir /s /q "C:\AMD-Fix""
+        echo exit
+    ) > "%UninstallerFile%"
+)
+
+:: Scheduled Task
+schtasks /create /tn "AMD-Win10-Fix" /tr "cmd.exe /c C:\AMD-Fix\%~nx0" /sc onstart /ru "NT AUTHORITY\SYSTEM" /rl highest /f >nul 2>&1
+
+:: Update-trigger logic
+if /i "%USERNAME%"=="SYSTEM" (
+    set "UpdateDetected=0"
+    for /f "tokens=5 delims=" %%S in ('reg query "HKLM\SYSTEM\CurrentControlSet\Services" /f "AMDEvents" /k 2^>nul') do (
+        sc query "%%S" | findstr /i "RUNNING" >nul 2>&1
+        if !errorlevel! equ 0 set "UpdateDetected=1"
+    )
+    if !UpdateDetected! equ 0 exit
+)
+
 :: ============================================================
 :: 1. Disable AMD External Events Utility
 :: ============================================================
