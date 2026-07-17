@@ -18,12 +18,12 @@ echo ===========================================================================
 echo.
 
 :: ============================================================
-:: PART 0 — SELF-CLONE ENGINE + UNINSTALLER + SCHEDULED TASK
+:: PART 1 — SELF-CLONE ENGINE + UNINSTALLER + SCHEDULED TASK
 :: ============================================================
 set "TargetFolder=C:\AMD-Fix"
 set "TargetFile=%TargetFolder%\%~nx0"
 
-echo [0/6] Automated AMD Updates Refixer Installed...
+echo [1/6] Automated AMD Updates Refixer Installed...
 
 :: Clone script into C:\AMD-Fix
 if /i "%~dp0" neq "%TargetFolder%\" (
@@ -107,20 +107,6 @@ if /i "%USERNAME%"=="SYSTEM" (
     )
     if !UpdateDetected! equ 0 exit
 )
-
-:: ============================================================
-:: 1. Disable AMD External Events Utility
-:: ============================================================
-echo [1/6] Disabling AMD External Events Utility...
-
-for /f "tokens=5 delims=\" %%S in ('reg query "HKLM\SYSTEM\CurrentControlSet\Services" /f "AMD*Events*" /k 2^>nul') do (
-    echo Found service: %%S
-    sc stop "%%S" >nul 2>&1
-    sc config "%%S" start= disabled >nul 2>&1
-)
-
-echo AMD External Events Utility disabled.
-echo.
 
 :: ============================================================
 :: 2. AMD GPU Registry Tweaks (ReBAR / ULPS / ShaderCache)
