@@ -62,10 +62,10 @@ if not exist "%UninstallerFile%" (
         echo         reg delete "%%%%K" /v "MainFrameLatency" /f ^>nul
         echo     ^)
         echo ^)
-        echo for /f "tokens=5 delims=" %%%%S in ^('reg query "HKLM\SYSTEM\CurrentControlSet\Services" /f "AMDEvents" /k 2^^^>nul'^) do ^(
-        echo     sc config "%%%%S" start= auto ^>nul
-        echo     sc start "%%%%S" ^>nul
-        echo ^)
+        echo for /f "tokens=5 delims=" %%%%S in ^('reg query "HKLM\SYSTEM\CurrentControlSet\Services" /f "AMD External Events Utility" /k 2^^^>nul'^) do ^(
+	echo     sc config "%%%%S" start= auto ^>nul
+	echo     sc start "%%%%S" ^>nul
+	echo ^)
         echo.
         echo echo [3/6] Restoring default Windows Graphics Scheduling parameters...
         echo reg add "HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers" /v "HwSchMode" /t REG_DWORD /d 1 /f ^>nul
@@ -95,17 +95,34 @@ if not exist "%UninstallerFile%" (
     ) > "%UninstallerFile%"
 )
 
+
 :: Scheduled Task
-schtasks /create /tn "AMD-Win10-Fix" /tr "cmd.exe /c C:\AMD-Fix\%~nx0" /sc onstart /ru "NT AUTHORITY\SYSTEM" /rl highest /f >nul 2>&1
+schtasks /create /tn "AMD-Win10-Fix" /tr "cmd.exe /c timeout /t 30 ^&^& C:\AMD-Fix\%~nx0" /sc onlogon /ru "NT AUTHORITY\SYSTEM" /rl highest /f
 
 :: Update-trigger logic
-if /i "%USERNAME%"=="SYSTEM" (
-    set "UpdateDetected=0"
-    for /f "tokens=5 delims=" %%S in ('reg query "HKLM\SYSTEM\CurrentControlSet\Services" /f "AMDEvents" /k 2^>nul') do (
-        sc query "%%S" | findstr /i "RUNNING" >nul 2>&1
-        if !errorlevel! equ 0 set "UpdateDetected=1"
+whoami | findstr /i "nt authority\system" >nul
+if %errorlevel% equ 0 (
+
+    set "CurrentDriver="
+
+    for /f "tokens=2 delims==" %%A in ('wmic path win32_videocontroller get driverversion /value ^| find "="') do (
+        set "CurrentDriver=%%A"
     )
-    if !UpdateDetected! equ 0 exit
+
+    set "OldDriver="
+
+    if exist "C:\AMD-Fix\amd_driver_version.txt" (
+        set /p OldDriver=<C:\AMD-Fix\amd_driver_version.txt
+    )
+
+    echo Current Driver: !CurrentDriver!
+    echo Saved Driver: !OldDriver!
+
+    if "!CurrentDriver!"=="!OldDriver!" (
+        exit /b
+    )
+
+    echo AMD driver update detected - running repair...
 )
 
 :: ============================================================
@@ -201,6 +218,15 @@ reg add "HKEY_CLASSES_ROOT\Directory\shell\TakeOwnership\command" /ve /t REG_SZ 
 reg add "HKEY_CLASSES_ROOT\Drive\shell\runas" /ve /t REG_SZ /d "Take Ownership" /f
 reg add "HKEY_CLASSES_ROOT\Drive\shell\runas\command" /ve /t REG_SZ /d "cmd.exe /c takeown /f \"%%1\" /r /d y && icacls \"%%1\" /grant *S-1-3-4:F /t" /f
 
+:: ============================================================
+:: 6.1. Driver Version Save
+:: ============================================================
+
+:: Save AMD driver version snapshot
+for /f "tokens=2 delims==" %%A in ('wmic path win32_videocontroller get driverversion /value ^| find "="') do (
+    echo %%A > C:\AMD-Fix\amd_driver_version.txt
+)
+
 echo.
 echo =================================================================
 echo            ALL OPTIMISATIONS APPLIED SUCCESSFULLY!
@@ -211,7 +237,7 @@ echo -----------------------------------------------------------------
 echo  [+] Automated Update Correction System
 echo  [+] Smart Access Memory / Resizable BAR Software Handshake Forced
 echo  [+] AMD Ultra Low Power State (ULPS) Driver Rails Locked
-echo  [+] AMD External Events Utility Background Engine Completely Terminated
+echo  [+] AMD External Events Utility Background Engine Restarted
 echo  [+] Global Shader Cache Compilation Enforced (ShaderCache = 2)
 echo  [+] AMD Micro-Sleep and DSC Deep Sleep States Disabled
 echo  [+] Driver Main Frame Latency Aligned with Scheduling Core
