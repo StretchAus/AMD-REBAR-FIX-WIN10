@@ -1,9 +1,6 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-@echo off
-setlocal EnableDelayedExpansion
-
 :: ============================================================
 :: ADMIN CHECK
 :: ============================================================
