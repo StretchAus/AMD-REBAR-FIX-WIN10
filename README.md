@@ -1,69 +1,122 @@
-# AMD-REBAR-FIX-WIN10
-AMD's new drivers cut Windows 10 ReBAR by decoupling system-level amdkmpfd files to fix install bugs, ditching optimizations for an aging OS. It’s incredibly insulting to be forced onto a worse gaming experience or pushed toward Windows 11 bloatware just for artificial feature locking. Total dick move to hardware owners who have preference. So heres my fix, this works with full AMD Adrenaline Installs! I personally use this with Hellm's MoreClockTool2 and amd driver only install without adrenaline for a full feature bloatless software but you will have to force it to startup with windows (details at bottom use at your own risk!)
+AMD-REBAR-FIX-WIN10
+AMD's newer drivers changed how some Windows 10 AMD GPU features are handled by removing certain legacy driver-side components and altering how system-level features such as ReBAR configuration are applied. This can leave Windows 10 users with hardware capable of features that are no longer exposed correctly through newer driver packages.
 
-## 🚀 How to Run the Bloody Thing
+This fix restores the missing software-side configuration paths through supported AMD driver registry parameters and Windows graphics configuration settings.
 
-1. Extract amd-win10-rebar-fix-run-as-admin.bat from the release zip to anywhere on your pc
-2. Right-click the file and select **Run as Administrator** (Windows will throw a fit if you don't give it admin tokens).
-3. The live logger screen will spit out verification receipts for all six optimization blocks before creating the silent background clone.
-4. **Reboot your system immediately** to let the graphics hardware scheduler, network stack, and kernel registry hooks successfully bind.
+This works with full AMD Adrenalin installs. It also works with Hellm's MoreClockTool2 and AMD driver-only installs for a cleaner, lower-bloat setup. If using MoreClockTool, you must manually configure Windows startup (details at the bottom). Use at your own risk.
 
-# AMD RDNA Master Kernel & Hardware Performance Injector
-# THIS SCRIPT ONLY AFFECTS GPU FOCUSED REGISTRY FILES SPECIFICALLY FOR AMD GPUS ON WINDOWS 10
+🚀 How to Run the Bloody Thing
+Extract amd-win10-rebar-fix-run-as-admin.bat anywhere on your PC.
 
-## ⚡ What This Script Actually Does
+Right-click → Run as Administrator (required for registry, service, and scheduled task changes).
 
-### Redundant Repository & Silent Canary Monitor
-* **Self-Cloning Storage Engine:** Automatically clones the script and an uninstaller script straight into `C:\AMD\Fix\` on the first run so your mates can't accidentally delete it and can easily uninstall if they think its causing issues.
-* **Automated Update Correction System:** Deploys a hidden, background startup automation task (`AMD-Win10-Fix`) via Windows Task Scheduler to run silently under maximum kernel authority (`NT AUTHORITY\SYSTEM`).
-* **Silent Canary Monitor:** Every single boot, an invisible thread runs a sub-millisecond check via dynamic wildcard filters (`AMD*Events*`). If a recent AMD driver update has sneakily flipped the event utility back to `RUNNING`, it trips a silent alarm and re-injects your entire optimization profile. If everything is already sweet, it exits instantly to preserve CPU cycles.
+The script applies AMD GPU registry configuration, Windows graphics scheduler settings, recovery parameters, creates C:\AMD-Fix\, generates the rollback utility, and registers the background driver update monitor.
 
-### AMD External Events Utility Suppression
-* **Dynamic Wildcard Interception:** Uses a `for` loop to scan the services registry, catching any of the four known naming variations AMD uses (spaces included), completely bypassing hardcoded script failures. 
-* **Service Halting & Hard-Locking:** Slams the brakes on running background threads via `sc stop` and sets startup parameters to `DISABLED`. This permanently kills legacy display polling loops, which completely fixes alt-tab black screens, hotkey input lag, and sudden display refresh-rate drops.
+Reboot immediately to allow all changes to apply.
 
-### RDNA Architecture Tuning & Software ReBAR Handshake
-* **Hardware Profile Mapping Matrix:** Loops through the master hardware class subkeys (`{4d36e968-e325-11ce-bfc1-08002be10318}`) to intercept your live AMD GPU configuration path, even if Windows tries to shuffle your card's slot location.
-* **Software Resizable BAR Handshake:** Manually forces Resizable BAR software flags (`KMD_EnableReBarForLegacyASIC`, `KMD_RebarControlMode`, `KMD_RebarControlSupport`). This forces the driver engine to request wide CPU-to-VRAM address mapping, entirely bypassing the missing `amdkmpfd` filter file that AMD decoupled from the Win10 installer and mimics windows 11.
-* **ULPS Deactivation:** Injects `EnableUlps=0` to shut down AMD Ultra Low Power State. This locks your GPU voltage rails open, stopping your card from dropping clocks mid-game and wrecking your ReBAR synchronization.
-* **Forced Universal Shader Caching:** Locks the global shader compiler array to `ShaderCache=2` to force the driver to keep shader compilation universally active, completely eradicating sudden micro-stutters and hitching when entering heavy game zones.
-* **Micro-Sleep Core Drops Disabled:** Overrides Display Stream Compression deep sleep states (`StutterMode=0`, `DisableDscDeepSleep=1`) to stop your compute units from downclocking during lighter rendering scenes.
-* **Frame Latency Alignment:** Syncs engine frame latency (`MainFrameLatency=1`) symmetrically with the hardware scheduling core.
+AMD RDNA Master Kernel & Hardware Performance Injector
+THIS SCRIPT ONLY AFFECTS GPU-FOCUSED REGISTRY FILES AND WINDOWS GRAPHICS SETTINGS FOR AMD GPUS ON WINDOWS 10
+⚡ What This Script Actually Does
+Redundant Repository & Silent Driver Update Monitor
+Self-Cloning Storage Engine: Copies the active script into C:\AMD-Fix\ and generates a rollback utility for recovery or removal.
 
-### Hardware-Accelerated GPU Scheduling (HWSCH / HAGS)
-* **Hardware Scheduling Enforcer:** Forces Windows Graphics Drivers into mode `2` (`HwSchMode=2`). This completely offloads thread allocation queues from your CPU and hands frame scheduling straight to the dedicated hardware processor on your graphics card for maximum performance.
+Automated Update Correction System: Creates a Task Scheduler entry (AMD-Win10-Fix) running under NT AUTHORITY\SYSTEM at logon to detect AMD driver changes and restore configuration when needed.
 
-###: Multi-Plane Overlay (MPO) Annihilation
-* **DWM Overlay Test Override:** Injects `OverlayTestMode=5` into the Desktop Window Manager to completely blow Windows Multi-Plane Overlay scaling out of existence. This is the ultimate, definitive fix for desktop flickering, Chromium browser stuttering, and Discord hardware-acceleration lag.
+Silent Driver Version Monitor: Stores the installed AMD driver version in amd_driver_version.txt and compares it during scheduled execution. If the driver version changes, the optimization profile is reapplied. If unchanged, the script exits immediately.
 
-### Core OS Driver Recovery & Network Optimizations
-* **TDR Extension Parameters:** Extends Timeout Detection and Recovery values (`TdrDelay=10`, `TdrDdiDelay=10`) from 2 seconds to 10 seconds. Windows will actually wait for heavy shader caching loops to finish instead of throwing a total tantrum and crashing your game straight back to the desktop.
-* **Hybrid Fast Startup Termination:** Disables `HiberbootEnabled=0` to stop Windows from hibernating dirty kernel states on shutdown, making sure a clean registry map loads on every cold boot.
-* **GameDVR Hook Blocks:** Disables Xbox background recording hooks (`AllowGameDVR=0`) to claw back lost memory bandwidth.
+AMD External Events Utility Handling
+Automatic AMD Service Detection: Locates AMD External Events Utility via registry instead of relying on fixed service names.
 
-### Safety-Hardened Take Ownership Context Extensions
-* **Universal Owner Rights Mapping:** Deploys file, directory, and drive right-click extensions using the universal language-agnostic security identifier (`*S-1-3-4:F`), completely avoiding hardcoded text string path bugs.
-* **Advanced Query Syntax (AQS) Guardrails:** Implements an explicit exclusion script block (`"AppliesTo"="NOT..."`). The right-click context option is automatically hidden when interacting with your main C-drive root or critical folders like `C:\Windows`, `System32`, `Program Files`, `Program Files (x86)`, `C:\Users`, or `C:\ProgramData`. This makes it completely foolproof so you or your mates can't accidentally brick the entire operating system with a bad click.
+Driver Recovery Support: Re-enables and starts the service during rollback to restore default AMD driver behaviour.
 
----
+Driver Package Compatibility: Registry-based discovery ensures compatibility across AMD driver naming variations.
 
-IF YOU WANT TO USE MORECLOCKTOOL WITH THIS IT IS A PAID MICROSOFT STORE APP 
+RDNA Architecture Tuning & Software ReBAR Configuration
+Hardware Profile Mapping Matrix: Scans AMD display driver registry class keys ({4d36e968-e325-11ce-bfc1-08002be10318}) to locate active AMD GPU nodes without relying on slot numbering.
 
-Use DDU to remove old drivers and install latest as driver-only install
+Software Resizable BAR Configuration: Applies AMD registry flags:
 
-Once Downloaded:
+KMD_EnableReBarForLegacyASIC
 
-1. Open the hidden AppsFolder Press Win + R, then type: 
-shell:AppsFolder
+KMD_RebarControlMode
 
-2. Find MoreClockTool
-Right‑click → Create shortcut  
-Windows will place the shortcut on your desktop.
+KMD_RebarControlSupport  
+These restore the software-side ReBAR configuration path for supported AMD hardware on Windows 10.
 
-3. Move shortcut from desktop into Startup
-Press Win + R again: 
-shell:startup
+ULPS Deactivation: Sets EnableUlps=0 to disable Ultra Low Power State transitions.
 
-Move the shortcut into this folder.
-This forces Windows to launch the app using its proper UWP activation path.
+Forced Shader Cache: Sets ShaderCache=2 to enable driver shader caching.
 
+Display Power State Adjustments: Applies StutterMode=0 and DisableDscDeepSleep=1 to reduce aggressive display power transitions.
+
+Frame Latency Alignment: Sets MainFrameLatency=1.
+
+Hardware-Accelerated GPU Scheduling (HAGS)
+Hardware Scheduling Enforcer: Forces Windows Hardware-Accelerated GPU Scheduling through:
+
+HwSchMode=2
+
+This enables the Windows GPU hardware scheduling path where supported.
+
+Multi-Plane Overlay (MPO) Configuration
+DWM Overlay Override: Applies:
+
+OverlayTestMode=5
+
+to disable Windows Multi-Plane Overlay behaviour, resolving flickering, browser acceleration issues, and overlay conflicts.
+
+Core OS Driver Recovery & System Optimizations
+TDR Extension Parameters: Extends GPU recovery timing with:
+
+TdrDelay=20
+TdrDdiDelay=20
+
+Hybrid Fast Startup Termination: Applies:
+
+HiberbootEnabled=0
+
+to disable Windows Fast Startup for cleaner initialization.
+
+GameDVR Hook Blocking: Applies:
+
+AllowGameDVR=0
+
+to disable Xbox GameDVR background hooks.
+
+Take Ownership Context Extensions
+Universal Owner Rights Mapping: Adds right-click ownership options using:
+
+*S-1-3-4:F
+
+This avoids language-specific permission issues.
+
+Supports:
+
+Files
+
+Folders
+
+Drives
+
+Manual MoreClockTool Startup Setup
+IF YOU WANT TO USE MORECLOCKTOOL WITH THIS
+MoreClockTool is a paid Microsoft Store application.
+
+For the cleanest setup:
+
+Use DDU to remove previous drivers.
+
+Install the latest AMD driver using driver-only installation.
+
+Once MoreClockTool is installed:
+
+Open the hidden AppsFolder:
+Win + R → shell:AppsFolder
+
+Find MoreClockTool → Right-click → Create shortcut
+
+Move the shortcut into Startup:
+Win + R → shell:startup  
+Move the shortcut into the folder.
+
+This launches MoreClockTool using its correct UWP activation path every startup.
